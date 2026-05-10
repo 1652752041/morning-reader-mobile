@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#2f7d62" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="晨读精读" />
+    <title>晨读精读</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="screen active" id="libraryScreen">
+        <header class="hero">
+          <p>手机端外刊精读</p>
+          <h1>晨读精读</h1>
+          <div class="hero-actions">
+            <button class="primary" data-open-import type="button">导入文章</button>
+            <button class="ghost" id="sampleBtn" type="button">试用样例</button>
+          </div>
+        </header>
+
+        <section class="stats">
+          <div>
+            <strong id="articleTotal">0</strong>
+            <span>篇文章</span>
+          </div>
+          <div>
+            <strong id="streakDays">0</strong>
+            <span>连续阅读</span>
+          </div>
+          <div>
+            <strong id="wordTotal">0</strong>
+            <span>生词</span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>阅读库</h2>
+            <button id="clearDemoBtn" class="text-btn" type="button">清理样例</button>
+          </div>
+          <div id="articleList" class="article-list"></div>
+        </section>
+      </section>
+
+      <section class="screen" id="readerScreen">
+        <header class="reader-head">
+          <button class="icon-btn" data-nav="library" type="button">←</button>
+          <div>
+            <p id="readerSource">来源</p>
+            <h1 id="readerTitle">标题</h1>
+          </div>
+        </header>
+
+        <section class="audio-panel">
+          <audio id="humanAudio" controls preload="metadata"></audio>
+          <div class="controls">
+            <button id="speakBtn" class="primary" type="button">系统朗读</button>
+            <button id="pauseBtn" class="ghost" type="button">暂停</button>
+            <button id="prevSentenceBtn" class="ghost" type="button">上一句</button>
+            <button id="nextSentenceBtn" class="ghost" type="button">下一句</button>
+          </div>
+          <input id="progressBar" type="range" min="0" max="100" value="0" />
+          <p id="readerStatus">准备阅读</p>
+        </section>
+
+        <article id="readerBody" class="reader-body"></article>
+      </section>
+
+      <section class="screen" id="importScreen">
+        <header class="reader-head">
+          <button class="icon-btn" data-nav="library" type="button">←</button>
+          <div>
+            <p>复制粘贴即可</p>
+            <h1>导入材料</h1>
+          </div>
+        </header>
+
+        <form id="importForm" class="import-form">
+          <label>
+            标题
+            <input id="titleInput" type="text" placeholder="可留空，自动识别" />
+          </label>
+          <label>
+            来源
+            <input id="sourceInput" type="text" value="The Economist" />
+          </label>
+          <label>
+            音频链接
+            <input id="audioInput" type="url" placeholder="可选，填入合法取得的 mp3/m4a 链接" />
+          </label>
+          <label>
+            正文
+            <textarea id="textInput" rows="14" placeholder="粘贴英文原文、中文翻译、公众号讲解、PDF 复制文本或词汇释义。"></textarea>
+          </label>
+          <button class="primary wide" type="submit">保存并排版</button>
+          <p class="note">内容只保存在这台手机的浏览器本地。请仅导入你自己合法取得的学习材料。</p>
+        </form>
+      </section>
+
+      <section class="screen" id="wordsScreen">
+        <header class="reader-head">
+          <button class="icon-btn" data-nav="library" type="button">←</button>
+          <div>
+            <p>本地保存</p>
+            <h1>生词本</h1>
+          </div>
+        </header>
+        <div id="wordList" class="word-list"></div>
+      </section>
+
+      <nav class="tabbar">
+        <button class="tab active" data-nav="library" type="button">书库</button>
+        <button class="tab" data-open-import type="button">导入</button>
+        <button class="tab" data-nav="words" type="button">生词</button>
+      </nav>
+    </main>
+
+    <div id="dictSheet" class="sheet" aria-hidden="true">
+      <div class="sheet-card">
+        <button id="closeSheetBtn" class="icon-btn close" type="button">×</button>
+        <strong id="sheetWord">word</strong>
+        <p id="sheetMeaning">选中单词后显示释义。</p>
+        <div class="sheet-actions">
+          <button id="saveWordBtn" class="primary" type="button">加入生词本</button>
+          <a id="eudicLink" class="ghost link" href="#">欧路词典</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

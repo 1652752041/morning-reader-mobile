@@ -1,0 +1,10 @@
+{
+  "name": "晨读精读",
+  "short_name": "晨读精读",
+  "description": "手机端外刊精读整理器，支持粘贴导入、自动排版、朗读、查词、生词本和阅读进度。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4faf6",
+  "theme_color": "#2f7d62",
+  "orientation": "portrait-primary"
+}

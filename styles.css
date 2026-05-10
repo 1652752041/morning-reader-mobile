@@ -1,0 +1,417 @@
+:root {
+  --green: #2f7d62;
+  --ink: #1f2933;
+  --muted: #6b7785;
+  --paper: #fffdf7;
+  --line: #d9e6df;
+  --yellow: #f4c95d;
+  --rose: #cf5c78;
+  --blue: #8ecae6;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--ink);
+  background: #f4faf6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app {
+  min-height: 100vh;
+  padding: env(safe-area-inset-top) 14px calc(82px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 10% 5%, rgba(244, 201, 93, 0.35), transparent 170px),
+    radial-gradient(circle at 92% 0%, rgba(142, 202, 230, 0.38), transparent 190px),
+    #f4faf6;
+}
+
+.screen {
+  display: none;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.screen.active {
+  display: block;
+}
+
+.hero {
+  padding: 28px 6px 18px;
+}
+
+.hero p,
+.reader-head p,
+.note,
+#readerStatus {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.hero h1,
+.reader-head h1 {
+  margin: 4px 0 0;
+  font-size: 34px;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.hero-actions,
+.controls,
+.sheet-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.primary,
+.ghost,
+.icon-btn,
+.text-btn {
+  min-height: 42px;
+  border: 0;
+  border-radius: 10px;
+}
+
+.primary {
+  padding: 0 16px;
+  color: #fff;
+  font-weight: 800;
+  background: var(--green);
+}
+
+.ghost {
+  padding: 0 14px;
+  color: var(--green);
+  font-weight: 800;
+  background: #fff;
+  border: 1px solid rgba(47, 125, 98, 0.22);
+}
+
+.wide {
+  width: 100%;
+}
+
+.icon-btn {
+  width: 42px;
+  color: var(--ink);
+  font-size: 20px;
+  background: rgba(31, 41, 51, 0.06);
+}
+
+.text-btn {
+  padding: 0;
+  color: var(--muted);
+  background: transparent;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.stats div,
+.panel,
+.audio-panel,
+.paragraph,
+.import-form,
+.word-card {
+  border: 1px solid rgba(31, 41, 51, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 16px 40px rgba(31, 41, 51, 0.08);
+}
+
+.stats div {
+  padding: 12px;
+}
+
+.stats strong {
+  display: block;
+  font-size: 24px;
+}
+
+.stats span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.panel {
+  padding: 14px;
+}
+
+.section-head,
+.reader-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.article-list,
+.word-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.article-card {
+  width: 100%;
+  padding: 14px;
+  text-align: left;
+  border: 1px solid rgba(31, 41, 51, 0.08);
+  border-radius: 10px;
+  background: var(--paper);
+}
+
+.article-card strong {
+  display: block;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.article-card span {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.reader-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 12px 0;
+  background: rgba(244, 250, 246, 0.92);
+  backdrop-filter: blur(14px);
+}
+
+.reader-head div {
+  flex: 1;
+}
+
+.audio-panel {
+  margin: 10px 0 14px;
+  padding: 12px;
+}
+
+audio {
+  width: 100%;
+  display: none;
+}
+
+audio.has-audio {
+  display: block;
+}
+
+#progressBar {
+  width: 100%;
+  margin-top: 12px;
+  accent-color: var(--green);
+}
+
+.reader-body {
+  display: grid;
+  gap: 12px;
+}
+
+.paragraph {
+  padding: 16px;
+}
+
+.paragraph.active {
+  outline: 3px solid rgba(244, 201, 93, 0.55);
+}
+
+.english,
+.chinese,
+.note-block {
+  margin: 0;
+  line-height: 1.85;
+}
+
+.english {
+  font-size: 19px;
+}
+
+.sentence.current {
+  background: linear-gradient(transparent 56%, rgba(244, 201, 93, 0.48) 0);
+  border-radius: 4px;
+}
+
+.chinese {
+  margin-top: 12px;
+  color: #465361;
+  font-size: 16px;
+}
+
+.note-block {
+  margin-top: 12px;
+  padding: 10px;
+  color: #405649;
+  font-size: 15px;
+  background: rgba(47, 125, 98, 0.1);
+  border-radius: 10px;
+}
+
+.import-form {
+  display: grid;
+  gap: 13px;
+  padding: 14px;
+  margin-top: 12px;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 12px;
+  color: var(--ink);
+  border: 1px solid rgba(31, 41, 51, 0.14);
+  border-radius: 10px;
+  background: #fff;
+}
+
+textarea {
+  min-height: 270px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.word-card {
+  padding: 14px;
+}
+
+.word-card strong {
+  display: block;
+  color: var(--green);
+  font-size: 20px;
+}
+
+.word-card p {
+  margin: 7px 0 0;
+  color: #465361;
+  line-height: 1.55;
+}
+
+.tabbar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px;
+  border: 1px solid rgba(31, 41, 51, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(18px);
+}
+
+.tab {
+  height: 42px;
+  color: var(--muted);
+  font-weight: 800;
+  background: transparent;
+  border: 0;
+  border-radius: 12px;
+}
+
+.tab.active {
+  color: #fff;
+  background: var(--green);
+}
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  align-items: flex-end;
+  padding: 14px;
+  background: rgba(31, 41, 51, 0.28);
+}
+
+.sheet.visible {
+  display: flex;
+}
+
+.sheet-card {
+  position: relative;
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 18px;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.sheet-card strong {
+  display: block;
+  color: var(--green);
+  font-size: 24px;
+}
+
+.sheet-card p {
+  margin: 10px 0 0;
+  line-height: 1.6;
+}
+
+.close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.link {
+  display: inline-grid;
+  place-items: center;
+  min-height: 42px;
+  text-decoration: none;
+}
+
+@media (min-width: 680px) {
+  .app {
+    padding-inline: 24px;
+  }
+
+  .hero h1,
+  .reader-head h1 {
+    font-size: 42px;
+  }
+}
