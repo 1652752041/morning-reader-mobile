@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#173d36" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="PDF 精读" />
+    <title>PDF 精读资料库</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/web/pdf_viewer.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="library-panel" aria-label="资料库">
+        <header class="brand">
+          <div class="brand-mark">PDF</div>
+          <div>
+            <p>像 Zotero 一样阅读</p>
+            <h1>精读资料库</h1>
+          </div>
+        </header>
+
+        <label class="upload-card">
+          <input id="pdfInput" type="file" accept="application/pdf" />
+          <span class="upload-title">导入 PDF</span>
+          <span class="upload-copy">从电脑或手机选择 PDF，文件只保存在本机浏览器。</span>
+        </label>
+
+        <label class="search-box">
+          <span>搜索</span>
+          <input id="searchInput" type="search" placeholder="标题、笔记、文件名" />
+        </label>
+
+        <div class="library-head">
+          <h2>文献</h2>
+          <button id="clearDemoBtn" class="plain-btn" type="button">清空全部</button>
+        </div>
+        <div id="docList" class="doc-list"></div>
+      </aside>
+
+      <main class="reader-panel">
+        <header class="reader-toolbar">
+          <button id="sidebarToggle" class="tool-btn icon-only" type="button" aria-label="打开资料库">☰</button>
+          <div class="doc-title-block">
+            <p id="docMeta">未选择 PDF</p>
+            <h2 id="docTitle">导入一份 PDF 开始精读</h2>
+          </div>
+          <div class="zoom-group" aria-label="缩放">
+            <button id="zoomOutBtn" class="tool-btn" type="button">-</button>
+            <span id="zoomLabel">100%</span>
+            <button id="zoomInBtn" class="tool-btn" type="button">+</button>
+          </div>
+        </header>
+
+        <section class="selection-toolbar" aria-label="标注工具">
+          <button class="action-btn active" data-tool="browse" type="button">浏览</button>
+          <button class="action-btn" data-tool="highlight" type="button">高亮</button>
+          <button class="action-btn" data-tool="underline" type="button">划线</button>
+          <button class="action-btn" data-tool="note" type="button">笔记</button>
+          <button class="action-btn" data-tool="lookup" type="button">查词</button>
+          <button id="copySelectionBtn" class="action-btn secondary" type="button">复制选中</button>
+        </section>
+
+        <div id="statusBar" class="status-bar">选择左侧 PDF，或直接导入新文件。</div>
+
+        <section id="viewerWrap" class="viewer-wrap">
+          <div id="emptyState" class="empty-state">
+            <div class="empty-icon">PDF</div>
+            <h2>导入 PDF 后在这里阅读</h2>
+            <p>选中文本，再点高亮、划线、笔记或查词。标注会自动保存到本机。</p>
+          </div>
+          <div id="pdfViewer" class="pdf-viewer"></div>
+        </section>
+      </main>
+
+      <aside class="notes-panel" aria-label="标注与笔记">
+        <section class="panel-section">
+          <div class="section-title">
+            <h2>查词</h2>
+            <button id="openEudicBtn" class="plain-btn" type="button">欧路</button>
+          </div>
+          <div id="wordCard" class="word-card">
+            <p class="muted">选中 PDF 里的单词或词组，再点“查词”。</p>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <div class="section-title">
+            <h2>标注</h2>
+            <span id="annotationCount" class="count-pill">0</span>
+          </div>
+          <div id="annotationList" class="annotation-list"></div>
+        </section>
+
+        <section class="panel-section">
+          <label class="document-note">
+            全文笔记
+            <textarea id="documentNote" rows="8" placeholder="记录这篇 PDF 的核心观点、问题和复习计划。"></textarea>
+          </label>
+          <button id="saveDocNoteBtn" class="primary-btn full" type="button">保存全文笔记</button>
+        </section>
+      </aside>
+    </div>
+
+    <div id="mobileBackdrop" class="mobile-backdrop"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
