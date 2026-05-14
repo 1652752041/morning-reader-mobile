@@ -357,12 +357,68 @@ button {
   display: block;
 }
 
+.pdf-viewer,
+.page-shell,
+.textLayer,
+.textLayer span {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 .textLayer {
   z-index: 2;
 }
 
 .annotation-layer {
   z-index: 3;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.page-label {
+  position: absolute;
+  z-index: 4;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--green-deep);
+  font-size: 12px;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 4px 14px rgba(21, 33, 41, 0.12);
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.page-error {
+  display: grid;
+  place-items: center;
+  padding: 22px;
+}
+
+.page-error-message {
+  display: grid;
+  gap: 8px;
+  max-width: 80%;
+  color: var(--red);
+  text-align: center;
+}
+
+.image-only-page::after {
+  content: "此页没有可选文字层";
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 4;
+  padding: 5px 8px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.82);
   pointer-events: none;
 }
 
@@ -549,6 +605,7 @@ input:focus {
   }
 
   .reader-panel {
+    display: block;
     min-height: 72vh;
   }
 
@@ -563,8 +620,13 @@ input:focus {
   }
 
   .viewer-wrap {
-    min-height: 64vh;
+    min-height: 0;
+    overflow: visible;
     padding: 14px 8px 22px;
+  }
+
+  .pdf-viewer {
+    gap: 14px;
   }
 
   .doc-title-block h2 {

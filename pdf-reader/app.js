@@ -33,7 +33,7 @@ if (!Math.sumPrecise) {
 
 const pdfjsLib = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/build/pdf.mjs");
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = "./pdf-worker-wrapper.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "./pdf-worker-wrapper.mjs?v=2";
 
 const DB_NAME = "pdfDeepReader";
 const DB_VERSION = 1;
@@ -46,6 +46,7 @@ const state = {
   zoom: 1,
   tool: "browse",
   selectedText: "",
+  selectedRects: [],
   lastLookup: ""
 };
 
@@ -157,6 +158,11 @@ function setTool(tool) {
   });
 }
 
+function resetSelectionCache() {
+  state.selectedText = "";
+  state.selectedRects = [];
+}
+
 function queryDocs() {
   const query = els.searchInput.value.trim().toLowerCase();
   if (!query) return state.docs;
@@ -257,6 +263,7 @@ async function refreshDocs(selectId = state.activeDocId) {
 
 async function importPdf(file) {
   if (!file) return;
+  resetSelectionCache();
   setStatus("正在读取 PDF...");
   const data = await file.arrayBuffer();
   const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(data.slice(0)) });
@@ -282,6 +289,7 @@ async function importPdf(file) {
 async function loadDocument(id) {
   const doc = state.docs.find((item) => item.id === id);
   if (!doc) return;
+  resetSelectionCache();
   state.activeDocId = id;
   state.pdf = null;
   state.zoom = 1;
@@ -316,7 +324,12 @@ async function renderPdf() {
 
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     const page = pageNumber === 1 ? pageOne : await pdf.getPage(pageNumber);
-    await renderPage(page, pageNumber, scale);
+    try {
+      await renderPage(page, pageNumber, scale);
+    } catch (error) {
+      console.error(`Page ${pageNumber} render failed`, error);
+      renderPageError(pageNumber, baseViewport, scale, error);
+    }
   }
   renderAllAnnotationMarks();
 }
@@ -344,7 +357,11 @@ async function renderPage(page, pageNumber, scale) {
   const annotationLayer = document.createElement("div");
   annotationLayer.className = "annotation-layer";
 
-  shell.append(canvas, textLayer, annotationLayer);
+  const pageLabel = document.createElement("div");
+  pageLabel.className = "page-label";
+  pageLabel.textContent = `第 ${pageNumber} 页`;
+
+  shell.append(canvas, textLayer, annotationLayer, pageLabel);
   els.pdfViewer.append(shell);
 
   await page.render({
@@ -360,6 +377,25 @@ async function renderPage(page, pageNumber, scale) {
     viewport
   });
   await layer.render();
+
+  if (!textContent.items?.length) {
+    shell.classList.add("image-only-page");
+  }
+}
+
+function renderPageError(pageNumber, baseViewport, scale, error) {
+  const shell = document.createElement("section");
+  shell.className = "page-shell page-error";
+  shell.dataset.page = String(pageNumber);
+  shell.style.width = `${baseViewport.width * scale}px`;
+  shell.style.height = `${Math.min(520, baseViewport.height * scale)}px`;
+  shell.innerHTML = `
+    <div class="page-error-message">
+      <strong>第 ${pageNumber} 页渲染失败</strong>
+      <span>${escapeHtml(error?.message || "未知错误")}</span>
+    </div>
+  `;
+  els.pdfViewer.append(shell);
 }
 
 function renderAllAnnotationMarks() {
@@ -415,17 +451,29 @@ function selectionRects() {
   return rects;
 }
 
+function captureSelection() {
+  const text = selectedText();
+  const rects = selectionRects();
+  if (!text || !rects.length) return false;
+  state.selectedText = text;
+  state.selectedRects = rects;
+  setStatus(`已选中：${text.slice(0, 60)}${text.length > 60 ? "..." : ""}`);
+  return true;
+}
+
 async function applyTool(tool) {
   const doc = activeDoc();
   if (!doc) {
     setStatus("请先导入并打开 PDF。");
     return;
   }
-  const text = selectedText();
-  const rects = selectionRects();
+  captureSelection();
+  const liveRects = selectionRects();
+  const text = selectedText() || state.selectedText;
+  const rects = liveRects.length ? liveRects : state.selectedRects;
   if (!text || !rects.length) {
     setTool(tool);
-    setStatus(`已选择“${annotationLabel(tool)}”。请先在 PDF 中拖动选中文本，再点工具。`);
+    setStatus(`已选择“${annotationLabel(tool)}”。请先在 PDF 正文中长按或拖动选中文字，再点工具。扫描图片版 PDF 不能直接选字。`);
     return;
   }
 
@@ -457,6 +505,7 @@ async function applyTool(tool) {
   await refreshDocs(doc.id);
   renderAllAnnotationMarks();
   window.getSelection()?.removeAllRanges();
+  resetSelectionCache();
   setStatus(`已添加${annotationLabel(tool)}。`);
 }
 
@@ -488,6 +537,7 @@ async function clearAllDocs() {
   state.docs = [];
   state.activeDocId = "";
   state.pdf = null;
+  resetSelectionCache();
   els.pdfViewer.innerHTML = "";
   els.emptyState.hidden = false;
   els.docTitle.textContent = "导入一份 PDF 开始精读";
@@ -500,7 +550,8 @@ async function clearAllDocs() {
 }
 
 async function copySelectedText() {
-  const text = selectedText();
+  captureSelection();
+  const text = selectedText() || state.selectedText;
   if (!text) {
     setStatus("请先选中 PDF 文本。");
     return;
@@ -510,7 +561,8 @@ async function copySelectedText() {
 }
 
 function openEudic() {
-  const term = state.lastLookup || selectedText();
+  captureSelection();
+  const term = state.lastLookup || selectedText() || state.selectedText;
   if (!term) {
     setStatus("请先选中单词或词组。");
     return;
@@ -519,6 +571,8 @@ function openEudic() {
 }
 
 function bindEvents() {
+  let selectionTimer = 0;
+
   els.pdfInput.addEventListener("change", async (event) => {
     try {
       await importPdf(event.target.files?.[0]);
@@ -578,9 +632,15 @@ function bindEvents() {
   });
 
   els.viewerWrap.addEventListener("mouseup", () => {
-    const text = selectedText();
-    state.selectedText = text;
-    if (text) setStatus(`已选中：${text.slice(0, 60)}${text.length > 60 ? "..." : ""}`);
+    window.setTimeout(captureSelection, 80);
+  });
+  els.viewerWrap.addEventListener("touchend", () => {
+    window.setTimeout(captureSelection, 180);
+  });
+  els.viewerWrap.addEventListener("keyup", captureSelection);
+  document.addEventListener("selectionchange", () => {
+    window.clearTimeout(selectionTimer);
+    selectionTimer = window.setTimeout(captureSelection, 120);
   });
 }
 
