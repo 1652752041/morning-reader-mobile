@@ -1,10 +1,10 @@
-const CACHE_NAME = "pdf-reader-pwa-v2";
+const CACHE_NAME = "pdf-reader-pwa-v3";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=2",
-  "./app.js?v=2",
-  "./pdf-worker-wrapper.mjs?v=2",
+  "./styles.css?v=3",
+  "./app.js?v=3",
+  "./pdf-worker-wrapper.mjs?v=3",
   "./manifest.webmanifest",
   "./icon.svg"
 ];
